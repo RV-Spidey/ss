@@ -1,0 +1,1192 @@
+COMPLETE STEP-BY-STEP EXECUTION OF PASS1.C WITH YOUR INPUT DATA
+==============================================================
+
+YOUR INPUT FILES:
+================
+input.txt:
+**      START   2000
+**      LDA     FIVE
+**      STA     ALPHA
+**      LDCH    CHARZ
+**      STCH    C1
+ALPHA   RESW    2
+FIVE    WORD    5
+CHARZ   BYTE    C'Z'
+C1      RESB    1
+**      END     **
+
+optab.txt:
+START   *
+LDA     03
+STA     0F
+LDCH    53
+STCH    57
+END     *
+
+COMPLETE LINE-BY-LINE EXECUTION TRACE:
+======================================
+
+MAIN FUNCTION EXECUTION:
+========================
+Line 9: int main()
+Line 10: {
+Line 11:     char label[10], opcode[10], operand[10];
+        → Declares three character arrays for storing assembly components
+Line 12:     char code[10], mnemonic[3];
+        → Declares arrays for optab.txt reading
+Line 13:     passOne(label, opcode, operand, code, mnemonic);
+        → Calls passOne function with declared arrays
+Line 14:     return 0;
+        → Returns 0 to indicate successful execution
+Line 15: }
+        → Main function ends
+
+PASSONE FUNCTION EXECUTION:
+===========================
+Line 17: void passOne(char label[10], char opcode[10], char operand[10], char code[10], char mnemonic[3])
+Line 18: {
+Line 20:     int locctr, start, length;
+        → Declares location counter, start address, and program length
+        → Initial values: locctr=0, start=0, length=0
+
+Line 21:     FILE *fp1, *fp2, *fp3, *fp4, *fp5;
+        → Declares five file pointers
+
+Line 23:     fp1 = fopen("input.txt", "r");
+        → Opens input.txt for reading
+        → fp1 points to input.txt file
+
+Line 24:     fp2 = fopen("optab.txt", "r");
+        → Opens optab.txt for reading
+        → fp2 points to optab.txt file
+
+Line 25:     fp3 = fopen("symtab.txt", "w");
+        → Opens symtab.txt for writing (creates new file)
+        → fp3 points to symtab.txt file
+
+Line 26:     fp4 = fopen("intermediate.txt", "w");
+        → Opens intermediate.txt for writing (creates new file)
+        → fp4 points to intermediate.txt file
+
+Line 27:     fp5 = fopen("length.txt", "w");
+        → Opens length.txt for writing (creates new file)
+        → fp5 points to length.txt file
+
+Line 29:     fscanf(fp1, "%s\t%s\t%s", label, opcode, operand);
+        → Reads first line from input.txt
+        → Reads: "**      START   2000"
+        → Result: label="**", opcode="START", operand="2000"
+
+Line 30:     if (strcmp(opcode, "START") == 0)
+        → Compares opcode with "START"
+        → strcmp("START", "START") returns 0
+        → Condition: 0 == 0 → TRUE
+
+Line 31:     {
+Line 32:         start = atoi(operand);
+        → Converts operand "2000" to integer
+        → start = 2000
+
+Line 33:         // and assign to start
+        → Comment line (no execution)
+
+Line 34:         locctr = start;
+        → Sets location counter to start address
+        → locctr = 2000
+
+Line 35:         fprintf(fp4, "\t%s\t%s\t%s\n", label, opcode, operand);
+        → Writes to intermediate.txt
+        → Writes: "\t**\tSTART\t2000\n"
+
+Line 36:         fscanf(fp1, "%s\t%s\t%s", label, opcode, operand);
+        → Reads second line from input.txt
+        → Reads: "**      LDA     FIVE"
+        → Result: label="**", opcode="LDA", operand="FIVE"
+Line 37:     }
+
+Line 38:     else
+        → This block is skipped (START condition was TRUE)
+
+Line 39:     {
+Line 40:         locctr = 0;
+        → This line is NOT executed
+Line 41:     }
+
+MAIN WHILE LOOP EXECUTION:
+==========================
+Line 43:     while (strcmp(opcode, "END") != 0)
+        → Checks if opcode is not "END"
+        → Current opcode = "LDA"
+        → strcmp("LDA", "END") != 0 → TRUE
+        → Loop condition is TRUE, enters loop
+
+ITERATION 1: Processing "**      LDA     FIVE"
+==============================================
+Current values: locctr=2000, label="**", opcode="LDA", operand="FIVE"
+
+Line 45:         fprintf(fp4, "%d\t%s\t%s\t%s\n", locctr, label, opcode, operand);
+        → Writes to intermediate.txt
+        → Writes: "2000\t**\tLDA\tFIVE\n"
+
+Line 47:         if (strcmp(label, "**") != 0)
+        → Checks if label is not "**"
+        → strcmp("**", "**") returns 0
+        → Condition: 0 != 0 → FALSE
+        → This block is skipped
+
+Line 48:         {
+Line 49:             fprintf(fp3, "%s\t%d\n", label, locctr);
+        → This line is NOT executed
+Line 50:         }
+
+Line 52:         fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads first line from optab.txt
+        → Reads: "START   *"
+        → Result: code="START", mnemonic="*"
+
+Line 53:         while (strcmp(code, "END") != 0)
+        → Checks if code is not "END"
+        → strcmp("START", "END") != 0 → TRUE
+        → Enters nested while loop
+
+Line 54:         {
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("LDA", "START") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 56:             {
+Line 57:                 locctr += 3;
+        → This line is NOT executed
+Line 58:                 break;
+        → This line is NOT executed
+Line 59:             }
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads second line from optab.txt
+        → Reads: "LDA     03"
+        → Result: code="LDA", mnemonic="03"
+
+Line 53:         while (strcmp(code, "END") != 0)
+        → Checks if code is not "END"
+        → strcmp("LDA", "END") != 0 → TRUE
+        → Continues nested while loop
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("LDA", "LDA") returns 0
+        → Condition: 0 == 0 → TRUE
+
+Line 57:                 locctr += 3;
+        → Adds 3 to location counter
+        → locctr = 2000 + 3 = 2003
+
+Line 58:                 break;
+        → Exits the nested while loop
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → This line is NOT executed due to break
+
+Line 54:         }
+        → Nested while loop ends
+
+Line 63:         if (strcmp(opcode, "WORD") == 0)
+        → Checks if opcode is "WORD"
+        → strcmp("LDA", "WORD") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 64:         {
+Line 65:             locctr += 3;
+        → This line is NOT executed
+Line 66:         }
+
+Line 67:         else if (strcmp(opcode, "RESW") == 0)
+        → Checks if opcode is "RESW"
+        → strcmp("LDA", "RESW") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 68:         {
+Line 69:             locctr += (3 * (atoi(operand)));
+        → This line is NOT executed
+Line 70:             // with 3
+        → Comment line (no execution)
+Line 71:         }
+
+Line 72:         else if (strcmp(opcode, "BYTE") == 0)
+        → Checks if opcode is "BYTE"
+        → strcmp("LDA", "BYTE") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 73:         {
+Line 74:             locctr++;
+        → This line is NOT executed
+Line 75:         }
+
+Line 76:         else if (strcmp(opcode, "RESB") == 0)
+        → Checks if opcode is "RESB"
+        → strcmp("LDA", "RESB") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 77:         {
+Line 78:             locctr += atoi(operand);
+        → This line is NOT executed
+Line 79:         }
+
+Line 81:         fscanf(fp1, "%s\t%s\t%s", label, opcode, operand);
+        → Reads third line from input.txt
+        → Reads: "**      STA     ALPHA"
+        → Result: label="**", opcode="STA", operand="ALPHA"
+
+Line 43:     while (strcmp(opcode, "END") != 0)
+        → Checks if opcode is not "END"
+        → Current opcode = "STA"
+        → strcmp("STA", "END") != 0 → TRUE
+        → Loop condition is TRUE, continues loop
+
+ITERATION 2: Processing "**      STA     ALPHA"
+==============================================
+Current values: locctr=2003, label="**", opcode="STA", operand="ALPHA"
+
+Line 45:         fprintf(fp4, "%d\t%s\t%s\t%s\n", locctr, label, opcode, operand);
+        → Writes to intermediate.txt
+        → Writes: "2003\t**\tSTA\tALPHA\n"
+
+Line 47:         if (strcmp(label, "**") != 0)
+        → Checks if label is not "**"
+        → strcmp("**", "**") returns 0
+        → Condition: 0 != 0 → FALSE
+        → This block is skipped
+
+Line 52:         fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads first line from optab.txt (resets file pointer)
+        → Reads: "START   *"
+        → Result: code="START", mnemonic="*"
+
+Line 53:         while (strcmp(code, "END") != 0)
+        → Checks if code is not "END"
+        → strcmp("START", "END") != 0 → TRUE
+        → Enters nested while loop
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("STA", "START") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads second line from optab.txt
+        → Reads: "LDA     03"
+        → Result: code="LDA", mnemonic="03"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("STA", "LDA") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads third line from optab.txt
+        → Reads: "STA     0F"
+        → Result: code="STA", mnemonic="0F"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("STA", "STA") returns 0
+        → Condition: 0 == 0 → TRUE
+
+Line 57:                 locctr += 3;
+        → Adds 3 to location counter
+        → locctr = 2003 + 3 = 2006
+
+Line 58:                 break;
+        → Exits the nested while loop
+
+Line 81:         fscanf(fp1, "%s\t%s\t%s", label, opcode, operand);
+        → Reads fourth line from input.txt
+        → Reads: "**      LDCH    CHARZ"
+        → Result: label="**", opcode="LDCH", operand="CHARZ"
+
+ITERATION 3: Processing "**      LDCH    CHARZ"
+==============================================
+Current values: locctr=2006, label="**", opcode="LDCH", operand="CHARZ"
+
+Line 45:         fprintf(fp4, "%d\t%s\t%s\t%s\n", locctr, label, opcode, operand);
+        → Writes to intermediate.txt
+        → Writes: "2006\t**\tLDCH\tCHARZ\n"
+
+Line 47:         if (strcmp(label, "**") != 0)
+        → Checks if label is not "**"
+        → strcmp("**", "**") returns 0
+        → Condition: 0 != 0 → FALSE
+        → This block is skipped
+
+Line 52:         fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads first line from optab.txt (resets file pointer)
+        → Reads: "START   *"
+        → Result: code="START", mnemonic="*"
+
+Line 53:         while (strcmp(code, "END") != 0)
+        → Checks if code is not "END"
+        → strcmp("START", "END") != 0 → TRUE
+        → Enters nested while loop
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("LDCH", "START") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads second line from optab.txt
+        → Reads: "LDA     03"
+        → Result: code="LDA", mnemonic="03"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("LDCH", "LDA") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads third line from optab.txt
+        → Reads: "STA     0F"
+        → Result: code="STA", mnemonic="0F"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("LDCH", "STA") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads fourth line from optab.txt
+        → Reads: "LDCH    53"
+        → Result: code="LDCH", mnemonic="53"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("LDCH", "LDCH") returns 0
+        → Condition: 0 == 0 → TRUE
+
+Line 57:                 locctr += 3;
+        → Adds 3 to location counter
+        → locctr = 2006 + 3 = 2009
+
+Line 58:                 break;
+        → Exits the nested while loop
+
+Line 81:         fscanf(fp1, "%s\t%s\t%s", label, opcode, operand);
+        → Reads fifth line from input.txt
+        → Reads: "**      STCH    C1"
+        → Result: label="**", opcode="STCH", operand="C1"
+
+ITERATION 4: Processing "**      STCH    C1"
+===========================================
+Current values: locctr=2009, label="**", opcode="STCH", operand="C1"
+
+Line 45:         fprintf(fp4, "%d\t%s\t%s\t%s\n", locctr, label, opcode, operand);
+        → Writes to intermediate.txt
+        → Writes: "2009\t**\tSTCH\tC1\n"
+
+Line 47:         if (strcmp(label, "**") != 0)
+        → Checks if label is not "**"
+        → strcmp("**", "**") returns 0
+        → Condition: 0 != 0 → FALSE
+        → This block is skipped
+
+Line 52:         fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads first line from optab.txt (resets file pointer)
+        → Reads: "START   *"
+        → Result: code="START", mnemonic="*"
+
+Line 53:         while (strcmp(code, "END") != 0)
+        → Checks if code is not "END"
+        → strcmp("START", "END") != 0 → TRUE
+        → Enters nested while loop
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("STCH", "START") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads second line from optab.txt
+        → Reads: "LDA     03"
+        → Result: code="LDA", mnemonic="03"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("STCH", "LDA") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads third line from optab.txt
+        → Reads: "STA     0F"
+        → Result: code="STA", mnemonic="0F"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("STCH", "STA") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads fourth line from optab.txt
+        → Reads: "LDCH    53"
+        → Result: code="LDCH", mnemonic="53"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("STCH", "LDCH") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads fifth line from optab.txt
+        → Reads: "STCH    57"
+        → Result: code="STCH", mnemonic="57"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("STCH", "STCH") returns 0
+        → Condition: 0 == 0 → TRUE
+
+Line 57:                 locctr += 3;
+        → Adds 3 to location counter
+        → locctr = 2009 + 3 = 2012
+
+Line 58:                 break;
+        → Exits the nested while loop
+
+Line 81:         fscanf(fp1, "%s\t%s\t%s", label, opcode, operand);
+        → Reads sixth line from input.txt
+        → Reads: "ALPHA   RESW    2"
+        → Result: label="ALPHA", opcode="RESW", operand="2"
+
+ITERATION 5: Processing "ALPHA   RESW    2"
+==========================================
+Current values: locctr=2012, label="ALPHA", opcode="RESW", operand="2"
+
+Line 45:         fprintf(fp4, "%d\t%s\t%s\t%s\n", locctr, label, opcode, operand);
+        → Writes to intermediate.txt
+        → Writes: "2012\tALPHA\tRESW\t2\n"
+
+Line 47:         if (strcmp(label, "**") != 0)
+        → Checks if label is not "**"
+        → strcmp("ALPHA", "**") returns non-zero
+        → Condition: non-zero != 0 → TRUE
+        → This block is executed
+
+Line 49:             fprintf(fp3, "%s\t%d\n", label, locctr);
+        → Writes to symtab.txt
+        → Writes: "ALPHA\t2012\n"
+
+Line 52:         fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads first line from optab.txt (resets file pointer)
+        → Reads: "START   *"
+        → Result: code="START", mnemonic="*"
+
+Line 53:         while (strcmp(code, "END") != 0)
+        → Checks if code is not "END"
+        → strcmp("START", "END") != 0 → TRUE
+        → Enters nested while loop
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("RESW", "START") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads second line from optab.txt
+        → Reads: "LDA     03"
+        → Result: code="LDA", mnemonic="03"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("RESW", "LDA") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads third line from optab.txt
+        → Reads: "STA     0F"
+        → Result: code="STA", mnemonic="0F"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("RESW", "STA") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads fourth line from optab.txt
+        → Reads: "LDCH    53"
+        → Result: code="LDCH", mnemonic="53"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("RESW", "LDCH") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads fifth line from optab.txt
+        → Reads: "STCH    57"
+        → Result: code="STCH", mnemonic="57"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("RESW", "STCH") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads sixth line from optab.txt
+        → Reads: "END     *"
+        → Result: code="END", mnemonic="*"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("RESW", "END") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 53:         while (strcmp(code, "END") != 0)
+        → Checks if code is not "END"
+        → strcmp("END", "END") returns 0
+        → Condition: 0 != 0 → FALSE
+        → Nested while loop exits
+
+Line 67:         else if (strcmp(opcode, "RESW") == 0)
+        → Checks if opcode is "RESW"
+        → strcmp("RESW", "RESW") returns 0
+        → Condition: 0 == 0 → TRUE
+        → This block is executed
+
+Line 69:             locctr += (3 * (atoi(operand)));
+        → Converts operand "2" to integer: atoi("2") = 2
+        → Calculates: 3 * 2 = 6
+        → Adds 6 to location counter
+        → locctr = 2012 + 6 = 2018
+
+Line 81:         fscanf(fp1, "%s\t%s\t%s", label, opcode, operand);
+        → Reads seventh line from input.txt
+        → Reads: "FIVE    WORD    5"
+        → Result: label="FIVE", opcode="WORD", operand="5"
+
+ITERATION 6: Processing "FIVE    WORD    5"
+==========================================
+Current values: locctr=2018, label="FIVE", opcode="WORD", operand="5"
+
+Line 45:         fprintf(fp4, "%d\t%s\t%s\t%s\n", locctr, label, opcode, operand);
+        → Writes to intermediate.txt
+        → Writes: "2018\tFIVE\tWORD\t5\n"
+
+Line 47:         if (strcmp(label, "**") != 0)
+        → Checks if label is not "**"
+        → strcmp("FIVE", "**") returns non-zero
+        → Condition: non-zero != 0 → TRUE
+        → This block is executed
+
+Line 49:             fprintf(fp3, "%s\t%d\n", label, locctr);
+        → Writes to symtab.txt
+        → Writes: "FIVE\t2018\n"
+
+Line 52:         fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads first line from optab.txt (resets file pointer)
+        → Reads: "START   *"
+        → Result: code="START", mnemonic="*"
+
+Line 53:         while (strcmp(code, "END") != 0)
+        → Checks if code is not "END"
+        → strcmp("START", "END") != 0 → TRUE
+        → Enters nested while loop
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("WORD", "START") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads second line from optab.txt
+        → Reads: "LDA     03"
+        → Result: code="LDA", mnemonic="03"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("WORD", "LDA") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads third line from optab.txt
+        → Reads: "STA     0F"
+        → Result: code="STA", mnemonic="0F"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("WORD", "STA") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads fourth line from optab.txt
+        → Reads: "LDCH    53"
+        → Result: code="LDCH", mnemonic="53"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("WORD", "LDCH") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads fifth line from optab.txt
+        → Reads: "STCH    57"
+        → Result: code="STCH", mnemonic="57"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("WORD", "STCH") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads sixth line from optab.txt
+        → Reads: "END     *"
+        → Result: code="END", mnemonic="*"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("WORD", "END") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 53:         while (strcmp(code, "END") != 0)
+        → Checks if code is not "END"
+        → strcmp("END", "END") returns 0
+        → Condition: 0 != 0 → FALSE
+        → Nested while loop exits
+
+Line 63:         if (strcmp(opcode, "WORD") == 0)
+        → Checks if opcode is "WORD"
+        → strcmp("WORD", "WORD") returns 0
+        → Condition: 0 == 0 → TRUE
+        → This block is executed
+
+Line 65:             locctr += 3;
+        → Adds 3 to location counter
+        → locctr = 2018 + 3 = 2021
+
+Line 81:         fscanf(fp1, "%s\t%s\t%s", label, opcode, operand);
+        → Reads eighth line from input.txt
+        → Reads: "CHARZ   BYTE    C'Z'"
+        → Result: label="CHARZ", opcode="BYTE", operand="C'Z'"
+
+ITERATION 7: Processing "CHARZ   BYTE    C'Z'"
+=============================================
+Current values: locctr=2021, label="CHARZ", opcode="BYTE", operand="C'Z'"
+
+Line 45:         fprintf(fp4, "%d\t%s\t%s\t%s\n", locctr, label, opcode, operand);
+        → Writes to intermediate.txt
+        → Writes: "2021\tCHARZ\tBYTE\tC'Z'\n"
+
+Line 47:         if (strcmp(label, "**") != 0)
+        → Checks if label is not "**"
+        → strcmp("CHARZ", "**") returns non-zero
+        → Condition: non-zero != 0 → TRUE
+        → This block is executed
+
+Line 49:             fprintf(fp3, "%s\t%d\n", label, locctr);
+        → Writes to symtab.txt
+        → Writes: "CHARZ\t2021\n"
+
+Line 52:         fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads first line from optab.txt (resets file pointer)
+        → Reads: "START   *"
+        → Result: code="START", mnemonic="*"
+
+Line 53:         while (strcmp(code, "END") != 0)
+        → Checks if code is not "END"
+        → strcmp("START", "END") != 0 → TRUE
+        → Enters nested while loop
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("BYTE", "START") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads second line from optab.txt
+        → Reads: "LDA     03"
+        → Result: code="LDA", mnemonic="03"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("BYTE", "LDA") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads third line from optab.txt
+        → Reads: "STA     0F"
+        → Result: code="STA", mnemonic="0F"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("BYTE", "STA") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads fourth line from optab.txt
+        → Reads: "LDCH    53"
+        → Result: code="LDCH", mnemonic="53"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("BYTE", "LDCH") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads fifth line from optab.txt
+        → Reads: "STCH    57"
+        → Result: code="STCH", mnemonic="57"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("BYTE", "STCH") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads sixth line from optab.txt
+        → Reads: "END     *"
+        → Result: code="END", mnemonic="*"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("BYTE", "END") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 53:         while (strcmp(code, "END") != 0)
+        → Checks if code is not "END"
+        → strcmp("END", "END") returns 0
+        → Condition: 0 != 0 → FALSE
+        → Nested while loop exits
+
+Line 72:         else if (strcmp(opcode, "BYTE") == 0)
+        → Checks if opcode is "BYTE"
+        → strcmp("BYTE", "BYTE") returns 0
+        → Condition: 0 == 0 → TRUE
+        → This block is executed
+
+Line 74:             locctr++;
+        → Increments location counter by 1
+        → locctr = 2021 + 1 = 2022
+
+Line 81:         fscanf(fp1, "%s\t%s\t%s", label, opcode, operand);
+        → Reads ninth line from input.txt
+        → Reads: "C1      RESB    1"
+        → Result: label="C1", opcode="RESB", operand="1"
+
+ITERATION 8: Processing "C1      RESB    1"
+==========================================
+Current values: locctr=2022, label="C1", opcode="RESB", operand="1"
+
+Line 45:         fprintf(fp4, "%d\t%s\t%s\t%s\n", locctr, label, opcode, operand);
+        → Writes to intermediate.txt
+        → Writes: "2022\tC1\tRESB\t1\n"
+
+Line 47:         if (strcmp(label, "**") != 0)
+        → Checks if label is not "**"
+        → strcmp("C1", "**") returns non-zero
+        → Condition: non-zero != 0 → TRUE
+        → This block is executed
+
+Line 49:             fprintf(fp3, "%s\t%d\n", label, locctr);
+        → Writes to symtab.txt
+        → Writes: "C1\t2022\n"
+
+Line 52:         fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads first line from optab.txt (resets file pointer)
+        → Reads: "START   *"
+        → Result: code="START", mnemonic="*"
+
+Line 53:         while (strcmp(code, "END") != 0)
+        → Checks if code is not "END"
+        → strcmp("START", "END") != 0 → TRUE
+        → Enters nested while loop
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("RESB", "START") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads second line from optab.txt
+        → Reads: "LDA     03"
+        → Result: code="LDA", mnemonic="03"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("RESB", "LDA") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads third line from optab.txt
+        → Reads: "STA     0F"
+        → Result: code="STA", mnemonic="0F"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("RESB", "STA") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads fourth line from optab.txt
+        → Reads: "LDCH    53"
+        → Result: code="LDCH", mnemonic="53"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("RESB", "LDCH") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads fifth line from optab.txt
+        → Reads: "STCH    57"
+        → Result: code="STCH", mnemonic="57"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("RESB", "STCH") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads sixth line from optab.txt
+        → Reads: "END     *"
+        → Result: code="END", mnemonic="*"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("RESB", "END") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 53:         while (strcmp(code, "END") != 0)
+        → Checks if code is not "END"
+        → strcmp("END", "END") returns 0
+        → Condition: 0 != 0 → FALSE
+        → Nested while loop exits
+
+Line 76:         else if (strcmp(opcode, "RESB") == 0)
+        → Checks if opcode is "RESB"
+        → strcmp("RESB", "RESB") returns 0
+        → Condition: 0 == 0 → TRUE
+        → This block is executed
+
+Line 78:             locctr += atoi(operand);
+        → Converts operand "1" to integer: atoi("1") = 1
+        → Adds 1 to location counter
+        → locctr = 2022 + 1 = 2023
+
+Line 81:         fscanf(fp1, "%s\t%s\t%s", label, opcode, operand);
+        → Reads tenth line from input.txt
+        → Reads: "**      END     **"
+        → Result: label="**", opcode="END", operand="**"
+
+ITERATION 9: Processing "**      END     **"
+===========================================
+Current values: locctr=2023, label="**", opcode="END", operand="**"
+
+Line 45:         fprintf(fp4, "%d\t%s\t%s\t%s\n", locctr, label, opcode, operand);
+        → Writes to intermediate.txt
+        → Writes: "2023\t**\tEND\t**\n"
+
+Line 47:         if (strcmp(label, "**") != 0)
+        → Checks if label is not "**"
+        → strcmp("**", "**") returns 0
+        → Condition: 0 != 0 → FALSE
+        → This block is skipped
+
+Line 52:         fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads first line from optab.txt (resets file pointer)
+        → Reads: "START   *"
+        → Result: code="START", mnemonic="*"
+
+Line 53:         while (strcmp(code, "END") != 0)
+        → Checks if code is not "END"
+        → strcmp("START", "END") != 0 → TRUE
+        → Enters nested while loop
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("END", "START") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads second line from optab.txt
+        → Reads: "LDA     03"
+        → Result: code="LDA", mnemonic="03"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("END", "LDA") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads third line from optab.txt
+        → Reads: "STA     0F"
+        → Result: code="STA", mnemonic="0F"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("END", "STA") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads fourth line from optab.txt
+        → Reads: "LDCH    53"
+        → Result: code="LDCH", mnemonic="53"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("END", "LDCH") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads fifth line from optab.txt
+        → Reads: "STCH    57"
+        → Result: code="STCH", mnemonic="57"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("END", "STCH") returns non-zero
+        → Condition: non-zero == 0 → FALSE
+        → This block is skipped
+
+Line 60:             fscanf(fp2, "%s\t%s", code, mnemonic);
+        → Reads sixth line from optab.txt
+        → Reads: "END     *"
+        → Result: code="END", mnemonic="*"
+
+Line 55:             if (strcmp(opcode, code) == 0)
+        → Compares opcode with code
+        → strcmp("END", "END") returns 0
+        → Condition: 0 == 0 → TRUE
+
+Line 57:                 locctr += 3;
+        → Adds 3 to location counter
+        → locctr = 2023 + 3 = 2026
+
+Line 58:                 break;
+        → Exits the nested while loop
+
+Line 81:         fscanf(fp1, "%s\t%s\t%s", label, opcode, operand);
+        → Attempts to read beyond EOF of input.txt
+        → EOF reached, no data read
+        → Variables remain unchanged
+
+Line 43:     while (strcmp(opcode, "END") != 0)
+        → Checks if opcode is not "END"
+        → Current opcode = "END"
+        → strcmp("END", "END") returns 0
+        → Condition: 0 != 0 → FALSE
+        → Main while loop exits
+
+FINAL PROCESSING:
+================
+Line 84:     fprintf(fp4, "%d\t%s\t%s\t%s\n", locctr, label, opcode, operand);
+        → Writes final line to intermediate.txt
+        → Writes: "2023\t**\tEND\t**\n"
+
+Line 86:     fclose(fp4);
+        → Closes intermediate.txt file
+
+Line 87:     fclose(fp3);
+        → Closes symtab.txt file
+
+Line 88:     fclose(fp2);
+        → Closes optab.txt file
+
+Line 89:     fclose(fp1);
+        → Closes input.txt file
+
+Line 91:     display();
+        → Calls display function
+
+Line 93:     length = locctr - start;
+        → Calculates program length
+        → length = 2023 - 2000 = 23
+
+Line 94:     fprintf(fp5, "%d", length);
+        → Writes program length to length.txt
+        → Writes: "23"
+
+Line 95:     fclose(fp5);
+        → Closes length.txt file
+
+Line 97:     printf("\nThe length of the code : %d\n", length);
+        → Prints program length to console
+        → Output: "\nThe length of the code : 23\n"
+
+Line 98: }
+        → passOne function ends
+
+DISPLAY FUNCTION EXECUTION:
+===========================
+Line 100: void display()
+Line 101: {
+Line 102:     char str;
+        → Declares character variable for reading files
+
+Line 103:     FILE *fp1, *fp2, *fp3;
+        → Declares three file pointers
+
+Line 105:     printf("\nThe contents of Input Table :\n\n");
+        → Prints header for input table
+
+Line 106:     fp1 = fopen("input.txt", "r");
+        → Opens input.txt for reading
+
+Line 107:     str = fgetc(fp1);
+        → Reads first character from input.txt
+        → str = '*'
+
+Line 108:     while (str != EOF)
+        → Checks if character is not EOF
+        → str = '*' (not EOF)
+        → Condition: '*' != EOF → TRUE
+        → Enters while loop
+
+Line 110:         printf("%c", str);
+        → Prints character '*' to console
+
+Line 111:         str = fgetc(fp1);
+        → Reads next character from input.txt
+        → str = '*'
+
+Line 108:     while (str != EOF)
+        → Continues reading and printing until EOF
+        → This loop continues until all characters are read
+
+Line 113:     fclose(fp1);
+        → Closes input.txt file
+
+Line 115:     printf("\n\nThe contents of Output Table :\n\n");
+        → Prints header for output table
+
+Line 116:     fp2 = fopen("intermediate.txt", "r");
+        → Opens intermediate.txt for reading
+
+Line 117:     str = fgetc(fp2);
+        → Reads first character from intermediate.txt
+
+Line 118:     while (str != EOF)
+        → Reads and prints all characters from intermediate.txt
+
+Line 123:     fclose(fp2);
+        → Closes intermediate.txt file
+
+Line 125:     printf("\n\nThe contents of Symbol Table :\n\n");
+        → Prints header for symbol table
+
+Line 126:     fp3 = fopen("symtab.txt", "r");
+        → Opens symtab.txt for reading
+
+Line 127:     str = fgetc(fp3);
+        → Reads first character from symtab.txt
+
+Line 128:     while (str != EOF)
+        → Reads and prints all characters from symtab.txt
+
+Line 133:     fclose(fp3);
+        → Closes symtab.txt file
+
+Line 134: }
+        → display function ends
+
+FINAL OUTPUT FILES:
+==================
+intermediate.txt:
+	**	START	2000
+2000	**	LDA	FIVE
+2003	**	STA	ALPHA
+2006	**	LDCH	CHARZ
+2009	**	STCH	C1
+2012	ALPHA	RESW	2
+2018	FIVE	WORD	5
+2021	CHARZ	BYTE	C'Z'
+2022	C1	RESB	1
+2023	**	END	**
+
+symtab.txt:
+ALPHA	2012
+FIVE	2018
+CHARZ	2021
+C1	2022
+
+length.txt:
+23
+
+CONSOLE OUTPUT:
+==============
+The contents of Input Table :
+
+**      START   2000
+**      LDA     FIVE
+**      STA     ALPHA
+**      LDCH    CHARZ
+**      STCH    C1
+ALPHA   RESW    2
+FIVE    WORD    5
+CHARZ   BYTE    C'Z'
+C1      RESB    1
+**      END     **
+
+The contents of Output Table :
+
+	**	START	2000
+2000	**	LDA	FIVE
+2003	**	STA	ALPHA
+2006	**	LDCH	CHARZ
+2009	**	STCH	C1
+2012	ALPHA	RESW	2
+2018	FIVE	WORD	5
+2021	CHARZ	BYTE	C'Z'
+2022	C1	RESB	1
+2023	**	END	**
+
+The contents of Symbol Table :
+
+ALPHA	2012
+FIVE	2018
+CHARZ	2021
+C1	2022
+
+The length of the code : 23
+
+PROGRAM EXECUTION COMPLETE
+==========================
