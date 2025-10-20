@@ -1,0 +1,118 @@
+TWO-PASS ASSEMBLER - PASS 1 EXPLANATION
+==========================================
+
+OVERVIEW:
+---------
+This is a Two-Pass Assembler implementation (Pass 1) written in C. The assembler processes 
+assembly language code and generates intermediate files with memory addresses assigned to 
+each instruction and data.
+
+MAIN COMPONENTS:
+----------------
+
+1. MAIN FUNCTION:
+   - Declares character arrays for label, opcode, operand, code, and mnemonic
+   - Calls the passOne() function to perform the first pass of assembly
+
+2. PASSONE FUNCTION:
+   - Core function that performs the first pass of the assembler
+   - Reads input file, assigns memory addresses, and generates output files
+
+3. DISPLAY FUNCTION:
+   - Shows the contents of input, intermediate, and symbol tables
+
+DETAILED CODE EXPLANATION:
+--------------------------
+
+INCLUDES:
+---------
+#include <stdio.h>   - Standard input/output operations
+#include <string.h>  - String manipulation functions
+#include <stdlib.h>  - Standard library functions (atoi)
+
+VARIABLES:
+----------
+- locctr: Location counter (tracks current memory address)
+- start: Starting address of the program
+- length: Total length of the program
+- File pointers: fp1-fp5 for different input/output files
+
+FILE OPERATIONS:
+----------------
+fp1 = fopen("input.txt", "r")     - Opens input assembly code
+fp2 = fopen("optab.txt", "r")     - Opens operation code table
+fp3 = fopen("symtab.txt", "w")    - Creates symbol table file
+fp4 = fopen("intermediate.txt", "w") - Creates intermediate code file
+fp5 = fopen("length.txt", "w")    - Creates program length file
+
+ALGORITHM STEPS:
+----------------
+
+1. READ FIRST LINE:
+   - Reads the first line of assembly code
+   - Checks if opcode is "START"
+   - If START: extracts starting address and sets locctr
+   - If no START: sets locctr to 0
+
+2. MAIN PROCESSING LOOP:
+   - Continues until "END" opcode is encountered
+   - For each line:
+     a) Writes to intermediate file with current locctr
+     b) If label exists (not "**"), adds to symbol table
+     c) Searches optab for opcode to determine instruction length
+     d) Updates locctr based on instruction type
+
+3. INSTRUCTION LENGTH CALCULATION:
+   - Standard instructions (LDA, STA, etc.): +3 bytes
+   - WORD directive: +3 bytes
+   - RESW directive: +3 * operand bytes
+   - BYTE directive: +1 byte
+   - RESB directive: +operand bytes
+
+4. SYMBOL TABLE GENERATION:
+   - Stores labels with their memory addresses
+   - Skips labels marked as "**" (no label)
+
+5. OUTPUT GENERATION:
+   - Intermediate file: Shows code with assigned addresses
+   - Symbol table: Maps labels to addresses
+   - Length file: Contains total program length
+
+ASSEMBLY DIRECTIVES HANDLED:
+----------------------------
+- START: Sets starting address
+- END: Terminates processing
+- WORD: 3-byte data storage
+- RESW: Reserve words (3 bytes each)
+- BYTE: 1-byte data storage
+- RESB: Reserve bytes
+
+EXAMPLE EXECUTION:
+------------------
+Input: ** START 2000
+       ** LDA FIVE
+       ** STA ALPHA
+       ALPHA RESW 2
+       FIVE WORD 5
+       ** END **
+
+Output:
+- Intermediate: Addresses assigned (2000, 2003, 2006, 2012, 2018)
+- Symbol Table: ALPHA→2012, FIVE→2018
+- Length: 23 bytes
+
+FILES GENERATED:
+----------------
+1. intermediate.txt - Code with memory addresses
+2. symtab.txt - Symbol table with label addresses
+3. length.txt - Program length
+
+PURPOSE:
+--------
+This Pass 1 creates the foundation for Pass 2, which will:
+- Resolve forward references
+- Generate object code
+- Create the final executable
+
+The location counter and symbol table from Pass 1 are essential for 
+Pass 2 to generate proper machine code with correct addresses.
