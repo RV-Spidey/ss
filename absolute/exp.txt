@@ -1,0 +1,98 @@
+ABSOLUTE LOADER - LINE BY LINE EXPLANATION
+==========================================
+
+This program implements an absolute loader that reads object code and loads it into memory.
+
+INCLUDES:
+---------
+Line 1: #include <stdio.h>   - Standard I/O functions (printf, scanf, fopen, fscanf)
+Line 2: #include <string.h>  - String manipulation functions (strcmp)
+Line 3: #include <stdlib.h>  - Standard library functions (atoi)
+
+VARIABLE DECLARATIONS:
+---------------------
+Line 5: void main() - Main function
+Line 7: FILE *fp - File pointer to read object code
+Line 8: int i,addr1,j,staddr1 - Loop counters and address variables
+Line 9: char arrays for storing:
+        - name[10] - User input program name
+        - line[50] - Current line from object file
+        - name1[10] - Program name from object file
+        - addr[10], rec[10], staddr[10] - Address strings
+        - ch - Character variable
+
+PROGRAM EXECUTION:
+------------------
+Line 10: printf("enter the name of the program") - Prompts user for program name
+Line 11: scanf("%s",name) - Reads program name from user
+
+Line 12: fp=fopen("objcode.txt","r") - Opens object code file for reading
+Line 13: fscanf(fp,"%s",line) - Reads first line from object file
+
+EXTRACTING PROGRAM NAME FROM HEADER RECORD:
+-------------------------------------------
+Line 14-16: Extracts program name from header record (H record)
+        - Loops from position 2 to 6 (characters 2-6 of "H^FIRST^002000^002023")
+        - Copies "FIRST" into name1 array
+        - Null terminates the string
+
+Line 17: printf("name from object file %s\n",name1) - Displays extracted name
+Line 18: if(strcmp(name,name1)==0) - Compares user input with object file name
+
+PROCESSING OBJECT CODE RECORDS:
+------------------------------
+Line 19-48: Main processing loop
+Line 21: fscanf(fp,"%s",line) - Reads next line from object file
+
+TEXT RECORD PROCESSING (T records):
+-----------------------------------
+Line 22: if(line[0]=='T') - Checks if current line is a Text record
+Line 24-26: Extracts starting address from T record
+        - From "T^002000^22^032018^0f2012^532021^572022^000005^5a"
+        - Extracts "002000" (positions 2-7) into staddr array
+        - Converts to integer: staddr1 = 2000
+
+Line 28: i=12 - Sets index to start of object code (after "T^002000^22^")
+Line 29-39: Processes object code bytes
+        - While not end of line
+        - If character is not '^' (separator):
+            - Prints memory address and 2-byte object code
+            - Increments address counter
+            - Moves to next 2 characters
+        - If character is '^', just skip it
+
+END RECORD PROCESSING (E records):
+----------------------------------
+Line 41-47: if(line[0]=='E') - Checks for End record
+        - Prints "Execution Address"
+        - Extracts execution address from E record
+        - From "E^002000", prints "002000"
+        - Breaks out of loop
+
+Line 49: while(!feof(fp)) - Continues until end of file
+Line 50: fclose(fp) - Closes the object file
+
+HOW IT WORKS WITH YOUR OBJCODE.TXT:
+===================================
+
+Your object file contains:
+H^FIRST^002000^002023  (Header: Program=FIRST, Start=2000, Length=23)
+T^002000^22^032018^0f2012^532021^572022^000005^5a  (Text record)
+E^002000  (End record, execution address=2000)
+
+When you run the program and enter "FIRST":
+1. It reads the header and extracts "FIRST"
+2. Compares with your input (matches)
+3. Processes the T record:
+   - Starting address: 2000
+   - Object code: 032018, 0f2012, 532021, 572022, 000005, 5a
+4. Prints memory map:
+   002000  03 20 18
+   002001  0f 20 12
+   002002  53 20 21
+   002003  57 20 22
+   002004  00 00 05
+   002005  5a
+5. Prints execution address: 002000
+
+This is a simple absolute loader that loads object code into memory starting at address 2000.
