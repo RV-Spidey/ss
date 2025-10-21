@@ -1,0 +1,152 @@
+DETAILED LINE-BY-LINE EXPLANATION OF RELOCATING LOADER
+======================================================
+
+YOUR RInput.txt CONTENT:
+H COPY 000000 00107A
+T 000000 1E FFC 14 0033 48 1039 10 0036 28 0030 30 0015 48 1061 3C 0003 20 002A 1C 0039 30 002D
+T 002500 15 E00 1D 0036 48 1061 18 0033 4C 1000 80 1000 60 1003
+E 000000
+
+HEADER SECTION (Lines 1-7):
+===========================
+Line 1: #include <stdio.h>     - Standard I/O library for file operations and printf/scanf
+Line 2: #include <string.h>   - String manipulation functions like strcmp, strcpy, strcat
+Line 3: #include <stdlib.h>   - Standard library functions
+Line 4: void convert(char h[12]); - Function declaration for hex-to-binary conversion
+Line 5: char bitmask[12];     - Global array to store bitmask from input file
+Line 6: char bit[12];         - Global array to store converted binary string
+Line 7: char bit[12]={0};     - BUG: Duplicate declaration, should be removed
+
+MAIN FUNCTION START (Lines 8-16):
+=================================
+Line 8: void main()           - Main function entry point
+Line 10: Variable declarations:
+         - add[6], length[10], input[10], binary[12] - Character arrays for data storage
+         - relocbit, ch - Single characters for bit checking and file reading
+         - pn[5] - Program name storage
+Line 11: Integer variables:
+         - start - Starting address entered by user
+         - inp, len, i - Loop counters and length variables
+         - address, opcode, addr, actualadd - Address and instruction components
+         - actualadd - Final relocated address
+Line 12: FILE *fp1,*fp2;     - File pointers for input and output files
+Line 13: printf("\n\n Enter the actual starting address"); - Prompt user for starting address
+Line 14: scanf("%x",&start); - Read starting address in hexadecimal format
+Line 15: fp1=fopen("RInput.txt","r"); - Open input file for reading
+Line 16: fp2=fopen("ROutput.txt","w"); - Open output file for writing
+
+FILE HEADER AND MAIN LOOP (Lines 17-20):
+=========================================
+Line 17: fscanf(fp1,"%s",input); - Read first token from RInput.txt
+         With your RInput.txt: Reads "H" (first character of "H COPY 000000 00107A")
+Line 18: fprintf(fp2,"_____________\n"); - Write header line to output file
+Line 19: fprintf(fp2,"ADDRESS\tCONTENT\n"); - Write column headers
+Line 20: fprintf(fp2,"_____________\n"); - Write separator line
+
+MAIN PROCESSING LOOP (Lines 21-54):
+===================================
+Line 21: while(strcmp(input,"E")!=0) - Continue processing until "E" (End) record is found
+         With your RInput.txt: Loop continues until it processes "E 000000"
+
+HEADER RECORD PROCESSING (Lines 23-29):
+=======================================
+Line 23: if(strcmp(input,"H")==0) - Check if current record is Header record
+Line 25: fscanf(fp1,"%s",pn); - Read program name
+         With your RInput.txt: Reads "COPY"
+Line 26: fscanf(fp1,"%hhx",add); - Read starting address
+         With your RInput.txt: Reads "000000"
+Line 27: fscanf(fp1,"%hhx",length); - Read program length
+         With your RInput.txt: Reads "00107A"
+Line 28: fscanf(fp1,"%s",input); - Read next token
+         With your RInput.txt: Reads "T" (from next line)
+
+TEXT RECORD PROCESSING (Lines 30-53):
+=====================================
+Line 30: if(strcmp(input,"T")==0) - Check if current record is Text record
+Line 32: fscanf(fp1,"%x",&address); - Read starting address of text record
+         First T record: Reads "000000"
+         Second T record: Reads "002500"
+Line 33: fscanf(fp1,"%x",&len); - Read length of text record
+         First T record: Reads "1E" (30 decimal)
+         Second T record: Reads "15" (21 decimal)
+Line 34: fscanf(fp1,"%s",bitmask); - Read bitmask
+         First T record: Reads "FFC"
+         Second T record: Reads "E00"
+
+Line 35: address+=start; - Add user's starting address to record address
+         If user enters 4000: 000000 + 4000 = 4000
+         If user enters 4000: 002500 + 4000 = 6500
+Line 36: convert(bitmask); - Convert hex bitmask to binary
+         "FFC" becomes "111111111100"
+         "E00" becomes "111000000000"
+Line 37: len=strlen(bit); - Get length of binary string
+Lines 38-39: Limit processing to maximum 10 instructions
+
+INSTRUCTION PROCESSING LOOP (Lines 40-51):
+==========================================
+Line 40: for(i=0;i<len;i++) - Process each instruction pair
+Line 42: fscanf(fp1,"%x",&opcode); - Read opcode
+Line 43: fscanf(fp1,"%x",&addr); - Read address
+Line 44: relocbit=bit[i]; - Get relocation bit for this instruction
+Lines 45-48: Relocation logic:
+         If bit is '0': Use address as-is (no relocation)
+         If bit is '1': Add starting address (relocation needed)
+Line 49: fprintf(fp2,"\n%x\t\t%x%x\n",address,opcode,actualadd); - Write to output
+Line 50: address+=3; - Move to next instruction (3 bytes per instruction)
+
+EXAMPLE WITH YOUR RInput.txt (assuming start=4000):
+==================================================
+First T record processing:
+- Bitmask "FFC" → "111111111100" (12 bits)
+- Instruction 1: opcode=14, addr=0033, bit=1 → actualadd=0033+4000=4033
+- Instruction 2: opcode=48, addr=1039, bit=1 → actualadd=1039+4000=5039
+- And so on...
+
+Second T record processing:
+- Bitmask "E00" → "111000000000" (12 bits)
+- First 3 instructions need relocation, rest don't
+
+END PROCESSING (Lines 55-67):
+=============================
+Line 55: End of main processing loop
+Line 56: Write footer to output file
+Lines 57-58: Close input and output files
+Line 59: Print message about output file
+Line 60: Reopen output file for reading
+Lines 61-65: Display output file contents
+Line 66: Close output file
+
+CONVERT FUNCTION (Lines 68-111):
+================================
+Line 68: void convert(char h[12]) - Function definition for hex-to-binary conversion
+Line 70: Initialize loop counter and length variable
+Line 71: Clear the bit string
+Line 72: Get length of input hex string
+
+Lines 73-110: Convert each hexadecimal digit to its 4-bit binary equivalent:
+- '0' → "0", '1' → "1", '2' → "10", '3' → "11"
+- '4' → "100", '5' → "101", '6' → "110", '7' → "111"
+- '8' → "1000", '9' → "1001", 'A' → "1010", 'B' → "1011"
+- 'C' → "1100", 'D' → "1101", 'E' → "1110", 'F' → "1111"
+
+EXAMPLE CONVERSIONS WITH YOUR RInput.txt:
+=========================================
+- "FFC" → "111111111100"
+- "E00" → "111000000000"
+
+STEP-BY-STEP EXECUTION WITH YOUR DATA:
+======================================
+1. User enters starting address (e.g., 4000)
+2. Reads "H COPY 000000 00107A" - stores program info
+3. Reads "T 000000 1E FFC" - processes 30 instructions with bitmask FFC
+4. Reads "T 002500 15 E00" - processes 21 instructions with bitmask E00
+5. Reads "E 000000" - ends processing
+6. Generates ROutput.txt with relocated addresses
+
+OUTPUT FORMAT:
+==============
+The program generates ROutput.txt with:
+- Header section
+- Address and content pairs
+- Each line shows: ADDRESS    CONTENT
+- Content is opcode + relocated address
