@@ -6,7 +6,7 @@ char bitmask[12];
 char bit[12]={0};
 void main()
 {
-char add[6],length[10],input[10],relocbit,ch,pn[5];
+char add[6],length[10],input[10],relocbit,pn[5];
 int start,len,i,address,opcode,addr,actualadd;
 FILE *fp1,*fp2;
 printf("\n\n Enter the actual starting address");
@@ -53,15 +53,6 @@ while(strcmp(input,"E")!=0)
         }
         fprintf(fp2,"_______________\n");
         fclose(fp1);
-        fclose(fp2);
-        printf("\n\nThe content of output file(ROutput)");
-        fp2=fopen("ROutput.txt","r");
-        ch=fgetc(fp2);
-        while(ch!=EOF)
-        {
-                printf("%c",ch);
-                ch=fgetc(fp2);
-        }
         fclose(fp2);
 }
 void convert(char h[12])
