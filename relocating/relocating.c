@@ -3,12 +3,11 @@
 #include <stdlib.h>
 void convert(char h[12]);
 char bitmask[12];
-char bit[12];
 char bit[12]={0};
 void main()
 {
-char add[6],length[10],input[10],binary[12],relocbit,ch,pn[5];
-int start,inp,len,i,address,opcode,addr,actualadd,tlen;
+char add[6],length[10],input[10],relocbit,ch,pn[5];
+int start,len,i,address,opcode,addr,actualadd;
 FILE *fp1,*fp2;
 printf("\n\n Enter the actual starting address");
 scanf("%x",&start);
