@@ -1,0 +1,120 @@
+Line-by-Line Explanation of pass2.c
+
+Line 1-2: #include <stdio.h> #include <stdlib.h> #include <string.h>
+- Include standard C libraries for input/output operations, memory management, and string handling functions
+
+Line 4: int main() {
+- Start of the main function where program execution begins
+
+Line 5: char opcode[20], operand[20], symbol[20], label[20], code[20], mnemonic[25];
+- Declare character arrays to store assembly language components:
+  * opcode: stores the operation code (LDA, STA, etc.)
+  * operand: stores the operand part of instruction 
+  * symbol: stores symbol names from symbol table
+  * label: stores labels from assembly code
+  * code: temporary storage for opcode lookup
+  * mnemonic: stores machine code equivalent of opcode
+
+Line 6: char add[20], objectcode[20];
+- add: stores formatted address as string
+- objectcode: stores the final generated object code for each instruction
+
+Line 7: int flag, flag1, locctr, loc;
+- flag: indicates if opcode is found in opcode table
+- flag1: indicates if symbol is found in symbol table  
+- locctr: location counter (current memory address)
+- loc: stores address of symbols from symbol table
+
+Line 8: int startAddr = 0, progLen = 0;
+- startAddr: starting address of the program
+- progLen: total length of the program
+
+Line 9: FILE *fp1, *fp2, *fp3, *fp4;
+- Declare file pointers for four files that will be used
+
+Line 10-13: File opening statements
+- fp1 = fopen("out3.txt", "r"): Opens intermediate file from pass1 for reading
+- fp2 = fopen("twoout.txt", "w"): Opens output file for writing final results
+- fp3 = fopen("opcode.txt", "r"): Opens opcode table for reading
+- fp4 = fopen("sym1.txt", "r"): Opens symbol table for reading
+
+Line 14-17: Error checking for file operations
+- Checks if any file failed to open and exits with error message if so
+
+Line 18: fscanf(fp1, "%s%s%s", label, opcode, operand);
+- Read the first line from intermediate file (should be START directive)
+
+Line 19-23: Handle START directive
+- Line 19: Check if opcode is "START"
+- Line 20: Extract starting address from operand
+- Line 21: Write START line to output file
+- Line 22: Read next line from intermediate file with location counter
+
+Line 24-26: Initialize text record variables
+- textRecord: string to accumulate object code for T record
+- textStart: starting address for text record
+- textLen: length of text record in bytes
+
+Line 27: while (strcmp(opcode, "END") != 0) {
+- Main processing loop - continue until END directive is encountered
+
+Line 28-35: Opcode lookup process
+- Line 28: Initialize flag to 0 (opcode not found)
+- Line 29: Reset opcode file pointer to beginning
+- Line 30-34: Search through opcode table to find matching opcode
+- Line 32-33: If match found, set flag=1 and break
+
+Line 36-49: Process valid opcodes
+- Line 36: If opcode was found in table
+- Line 37: Initialize symbol flag to 0
+- Line 38: Reset symbol table file pointer
+- Line 39-44: Search symbol table for operand
+- Line 45-48: If symbol found, create object code by combining mnemonic and address
+- Line 49: If symbol not found, use "0000" as address
+
+Line 50-61: Handle BYTE directive
+- Line 50: Check if opcode is "BYTE"
+- Line 51-57: Handle character constants (C'...')
+  * Extract characters and convert each to hexadecimal
+- Line 58-61: Handle hexadecimal constants (X'...')
+  * Extract hex digits directly
+
+Line 62: Handle WORD directive
+- Convert decimal operand to 6-digit object code
+
+Line 63: Handle unknown opcodes
+- Set object code to "-" for unrecognized opcodes
+
+Line 64: fprintf(fp2, "%d\t%s\t%s\t%s\t%s\n", locctr, label, opcode, operand, objectcode);
+- Write complete line with location counter, label, opcode, operand, and object code to output
+
+Line 65-68: Build text record
+- Line 65: Check if object code is valid (not "-")
+- Line 66: Append object code to text record string
+- Line 67: Update text record length
+
+Line 69: if (fscanf(fp1, "%d%s%s%s", &locctr, label, opcode, operand) == EOF) break;
+- Read next line from intermediate file, break if end of file reached
+
+Line 71: fprintf(fp2, "\t%s\t%s\n", opcode, operand);
+- Write the END directive to output file
+
+Line 72: progLen = locctr - startAddr;
+- Calculate total program length
+
+Line 73-75: Generate loader records
+- Line 73: Write Header (H) record with program name, start address, and length
+- Line 74: Write Text (T) record with start address, length, and object code
+- Line 75: Write End (E) record with execution start address
+
+Line 76-79: Close all files
+- Close all four opened files to free system resources
+
+Line 80: printf("Pass 2 Assembler completed with H T E records. Output written to twoout.txt\n");
+- Display completion message to user
+
+Line 81: return 0;
+- Return 0 to indicate successful program completion
+
+Line 82: }
+- End of main function

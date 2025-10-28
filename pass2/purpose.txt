@@ -1,0 +1,36 @@
+Purpose of the Code
+
+This code implements a Pass 2 Assembler for the SIC (Simplified Instructional Computer) assembly language. Here's what it does:
+
+Main Function
+The program (pass2.c) is the second phase of a two-pass assembler that:
+
+1. Resolves Symbol Addresses: Takes the intermediate output from Pass 1 and resolves all symbolic addresses using the symbol table
+
+2. Generates Object Code: Converts assembly mnemonics into machine code by:
+   - Looking up opcodes from the opcode table (Opcode.txt)
+   - Resolving symbol references using the symbol table (Sym1.txt) 
+   - Handling different data types (WORD, BYTE with character/hex constants)
+
+3. Creates Loader Records: Generates standard object file format with:
+   - H Record: Header record with program name, start address, and length
+   - T Record: Text record containing the actual machine code
+   - E Record: End record with execution start address
+
+Input Files
+- Out3.txt: Intermediate file from Pass 1 with location counters and assembly instructions
+- Opcode.txt: Opcode table mapping mnemonics to machine codes  
+- Sym1.txt: Symbol table with labels and their resolved addresses
+
+Output
+- Twoout.txt: Final assembled program with object code and loader records
+
+Example Processing
+The assembler converts assembly code like:
+START 2000
+LDA FIVE
+STA ALPHA
+
+Into object code with proper address resolution and generates loader records that can be loaded and executed by the SIC machine.
+
+Summary: This is a complete implementation of the second pass of a two-pass assembler for educational purposes, demonstrating how assembly language is converted into executable machine code.
